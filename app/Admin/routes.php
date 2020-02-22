@@ -12,4 +12,5 @@ Route::group([
 
     $router->get('/', 'HomeController@index')->name('admin.home');
     $router->resource('telegram/users', TelegramUserController::class);
+    $router->resource('images', ImageController::class);
 });

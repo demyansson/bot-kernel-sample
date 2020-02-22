@@ -17,7 +17,7 @@ class CreateImagesTable extends Migration
             $table->bigIncrements('id');
 
             $table->string('image');
-            $table->boolean('is_selected');
+            $table->boolean('is_selected')->default(false);
 
             $table->timestamps();
         });
