@@ -2,6 +2,7 @@
 
 namespace App\BotKernel\MessengerContexts;
 
+use App\BotKernel\User\IBotUserManager;
 use App\BotKernel\User\IUser;
 
 interface IMessengerContext
@@ -26,6 +27,13 @@ interface IMessengerContext
      * @return IUser|null
      */
     public function getUser(): ?IUser;
+
+    /**
+     * Get user manager
+     *
+     * @return IBotUserManager
+     */
+    public function getUserManager(): IBotUserManager;
 
     /**
      * Get payload

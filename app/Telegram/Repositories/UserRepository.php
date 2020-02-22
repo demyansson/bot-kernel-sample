@@ -32,6 +32,20 @@ class UserRepository
     }
 
     /**
+     * Update user data
+     *
+     * @param User $user
+     * @param array $data
+     * @return bool
+     */
+    public function update(User $user, array $data)
+    {
+        $user->fill($data);
+
+        return $user->save();
+    }
+
+    /**
      * Find user by id
      *
      * @param int $id

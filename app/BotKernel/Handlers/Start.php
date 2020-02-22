@@ -6,9 +6,10 @@ use App\BotKernel\MessengerContexts\IMessengerContext;
 
 class Start implements IMessageHandler
 {
-
     public function handle(IMessengerContext $messenger)
     {
-        return 'Привет, добро пожаловать! Я справлюсь с тестовым заданием 🙂';
+        $messenger->getUserManager()->setContext('set_name');
+
+        return "Привет, добро пожаловать! Я справлюсь с тестовым заданием \nДавай познакомимся, как тебя зовут? ";
     }
 }

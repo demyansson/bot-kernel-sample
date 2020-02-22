@@ -11,7 +11,7 @@ class User extends Model implements IUser
 
     public $incrementing = false;
 
-    protected $fillable = ['first_name', 'last_name', 'language_code', 'is_bot'];
+    protected $fillable = ['first_name', 'last_name', 'language_code', 'is_bot' , 'name', 'phone', 'image', 'category', 'feedback'];
 
     public function getId()
     {

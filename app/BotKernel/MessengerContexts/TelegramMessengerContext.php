@@ -2,6 +2,7 @@
 
 namespace App\BotKernel\MessengerContexts;
 
+use App\BotKernel\User\IBotUserManager;
 use App\BotKernel\User\IUser;
 
 class TelegramMessengerContext implements IMessengerContext
@@ -93,5 +94,15 @@ class TelegramMessengerContext implements IMessengerContext
     public function set($key, $value): void
     {
         $this->attributes[$key] = $value;
+    }
+
+    /**
+     * Get user manager
+     *
+     * @return IBotUserManager
+     */
+    public function getUserManager(): IBotUserManager
+    {
+        return resolve(IBotUserManager::class)->setUser($this->getUser());
     }
 }

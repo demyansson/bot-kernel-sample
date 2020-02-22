@@ -46,13 +46,24 @@ class Bot
             $messenger->setUser($user);
             $messenger->setMessage($message->getText());
 
+            if($contact = $message->getContact()){
+                $messenger->set('contact', $contact);
+            }
+
             $answer = $this->bot->handleMessage($messenger);
+
+            if(!$answer){
+                return;
+            }
 
             $params = [
                 'chat_id' => $message->getChat()->getId(),
                 'text' => $answer,
             ];
 
+            if($keyboard = $messenger->get('keyboard')){
+                $params['reply_markup'] = $keyboard;
+            }
             $this->telegram->sendMessage($params);
         }
     }
