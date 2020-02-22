@@ -13,9 +13,9 @@ class SetCategory implements IMessageHandler
         resolve(UserRepository::class)->update($messenger->getUser(), [
             'category' => $messenger->get('callback')->getData()
         ]);
-        return 'Поздравляю, теперь пришли мне фото';
 
         $messenger->getUserManager()->setContext('set_photo');
 
+        return 'Поздравляю, теперь пришли мне фото';
     }
 }
