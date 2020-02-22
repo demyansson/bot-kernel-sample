@@ -26,7 +26,7 @@ class SetContact implements IMessageHandler
             ];
         }
 
-        $messenger->getUserManager()->setContext('set_photo');
+        $messenger->getUserManager()->setContext('set_category');
 
         $messenger->set('keyboard', Keyboard::make([
             'inline_keyboard' => $inlineKeyboard,

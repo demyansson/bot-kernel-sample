@@ -5,6 +5,7 @@ namespace App\Telegram;
 use App\BotKernel\Bot as BotBase;
 use App\BotKernel\MessengerContexts\TelegramMessengerContext;
 use App\Telegram\Services\UserService;
+use Illuminate\Support\Facades\Log;
 use Telegram\Bot\Api;
 use Telegram\Bot\Objects\Update;
 
@@ -38,33 +39,62 @@ class Bot
      */
     public function handleUpdate(Update $update)
     {
+        if(!$chat = $update->getChat()){
+            return;
+        }
+
+        $messenger = new TelegramMessengerContext();
+
+        $from = null;
+
         if($message = $update->getMessage()){
-            $user = $this->userService->findOrCreate($message->getFrom());
+            Log::info('message');
+            $from = $message->getFrom();
 
-            $messenger = new TelegramMessengerContext();
-
-            $messenger->setUser($user);
             $messenger->setMessage($message->getText());
 
             if($contact = $message->getContact()){
                 $messenger->set('contact', $contact);
             }
 
-            $answer = $this->bot->handleMessage($messenger);
-
-            if(!$answer){
-                return;
+            if($photo = $message->getPhoto()){
+                $messenger->set('photo', $photo);
             }
-
-            $params = [
-                'chat_id' => $message->getChat()->getId(),
-                'text' => $answer,
-            ];
-
-            if($keyboard = $messenger->get('keyboard')){
-                $params['reply_markup'] = $keyboard;
-            }
-            $this->telegram->sendMessage($params);
         }
+
+        if($callback = $update->getCallbackQuery()){
+            Log::info('callback');
+
+            $from = $callback->getFrom();
+
+            $messenger->set('callback', $callback);
+        }
+
+        if ($from === null){
+            return;
+        }
+
+        $user = $this->userService->findOrCreate($from);
+
+        $messenger->setUser($user);
+
+        $answer = $this->bot->handleMessage($messenger);
+
+        Log::info($answer);
+
+        if(!$answer){
+            return;
+        }
+
+        $params = [
+            'chat_id' => $chat->getId(),
+            'text' => $answer,
+        ];
+
+        if($keyboard = $messenger->get('keyboard')){
+            $params['reply_markup'] = $keyboard;
+        }
+
+        $this->telegram->sendMessage($params);
     }
 }

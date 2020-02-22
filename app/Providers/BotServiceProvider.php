@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\BotKernel\Bot;
+use App\BotKernel\Handlers\SetCategory;
 use App\BotKernel\Handlers\SetContact;
 use App\BotKernel\Handlers\SetName;
 use App\BotKernel\Handlers\Start;
@@ -11,6 +12,7 @@ use App\BotKernel\User\EloquentUserManager;
 use App\BotKernel\User\IBotUserManager;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\ServiceProvider;
+use Telegram\Bot\Objects\CallbackQuery;
 use Telegram\Bot\Objects\Contact;
 
 class BotServiceProvider extends ServiceProvider
@@ -41,7 +43,10 @@ class BotServiceProvider extends ServiceProvider
             ->addHandler(SetName::class, true, 'set_name')
             ->addHandler(SetContact::class, function (IMessengerContext $messenger) {
                 return $messenger->get('contact') instanceof Contact;
-            }, 'set_contact');
+            }, 'set_contact')
+            ->addHandler(SetCategory::class, function (IMessengerContext $messenger) {
+                return $messenger->get('callback') instanceof CallbackQuery;
+            }, 'set_category');
 
         Log::info('Bot is configured');
 
