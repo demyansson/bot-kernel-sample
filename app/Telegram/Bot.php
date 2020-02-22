@@ -5,8 +5,10 @@ namespace App\Telegram;
 use App\BotKernel\Bot as BotBase;
 use App\BotKernel\MessengerContexts\TelegramMessengerContext;
 use App\Telegram\Services\UserService;
+use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Support\Facades\Log;
 use Telegram\Bot\Api;
+use Telegram\Bot\Objects\PhotoSize;
 use Telegram\Bot\Objects\Update;
 
 class Bot
@@ -26,11 +28,17 @@ class Bot
      */
     private $userService;
 
-    public function __construct(Api $telegram, BotBase $bot, UserService $userService)
+    /**
+     * @var Filesystem
+     */
+    private $storage;
+
+    public function __construct(Api $telegram, BotBase $bot, UserService $userService, Filesystem $storage)
     {
         $this->telegram = $telegram;
         $this->bot = $bot;
         $this->userService = $userService;
+        $this->storage = $storage;
     }
 
     /**
@@ -58,6 +66,7 @@ class Bot
             }
 
             if($photo = $message->getPhoto()){
+                Log::info(print_r($photo, true));
                 $messenger->set('photo', $photo);
             }
         }
@@ -93,6 +102,16 @@ class Bot
 
         if($keyboard = $messenger->get('keyboard')){
             $params['reply_markup'] = $keyboard;
+        }
+
+        if($photo = $messenger->get('reply_photo')){
+            $this->telegram->sendPhoto([
+                'chat_id' => $chat->getId(),
+                'photo' =>  $this->storage->readStream($photo),
+                'caption' => $answer
+            ]);
+
+            return;
         }
 
         $this->telegram->sendMessage($params);

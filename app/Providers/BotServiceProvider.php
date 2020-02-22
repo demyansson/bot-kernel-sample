@@ -6,6 +6,7 @@ use App\BotKernel\Bot;
 use App\BotKernel\Handlers\SetCategory;
 use App\BotKernel\Handlers\SetContact;
 use App\BotKernel\Handlers\SetName;
+use App\BotKernel\Handlers\SetPhoto;
 use App\BotKernel\Handlers\Start;
 use App\BotKernel\MessengerContexts\IMessengerContext;
 use App\BotKernel\User\EloquentUserManager;
@@ -14,6 +15,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\ServiceProvider;
 use Telegram\Bot\Objects\CallbackQuery;
 use Telegram\Bot\Objects\Contact;
+use Telegram\Bot\Objects\PhotoSize;
 
 class BotServiceProvider extends ServiceProvider
 {
@@ -46,7 +48,10 @@ class BotServiceProvider extends ServiceProvider
             }, 'set_contact')
             ->addHandler(SetCategory::class, function (IMessengerContext $messenger) {
                 return $messenger->get('callback') instanceof CallbackQuery;
-            }, 'set_category');
+            }, 'set_category')
+            ->addHandler(SetPhoto::class, function (IMessengerContext $messenger) {
+                return $messenger->get('photo') instanceof PhotoSize;
+            }, 'set_photo');
 
         Log::info('Bot is configured');
 
