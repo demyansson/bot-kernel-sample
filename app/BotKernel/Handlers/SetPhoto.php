@@ -3,6 +3,7 @@
 namespace App\BotKernel\Handlers;
 
 use App\BotKernel\MessengerContexts\IMessengerContext;
+use App\Repositories\ImageRepository;
 use App\Telegram\Repositories\UserRepository;
 use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Support\Facades\Log;
@@ -44,9 +45,9 @@ class SetPhoto implements IMessageHandler
 
         $filePath = $file->getFilePath();
 
-        $fileUrl = 'https://api.telegram.org/file/bot'. $this->telegram->getAccessToken() .'/' . $filePath;
+        $fileUrl = 'https://api.telegram.org/file/bot' . $this->telegram->getAccessToken() . '/' . $filePath;
 
-        $path = 'telegram/users/'. Str::random(16) .'.'. pathinfo($filePath, PATHINFO_EXTENSION);
+        $path = 'telegram/users/' . Str::random(16) . '.' . pathinfo($filePath, PATHINFO_EXTENSION);
 
         $this->storage->put($path, file_get_contents($fileUrl));
 
@@ -54,7 +55,10 @@ class SetPhoto implements IMessageHandler
             'image' => $path
         ]);
 
-        $messenger->set('reply_photo', $path);
+
+        if ($replyImage = resolve(ImageRepository::class)->getSelected()) {
+            $messenger->set('reply_photo', $replyImage->image);
+        }
 
         $messenger->getUserManager()->setContext('feedback');
 
