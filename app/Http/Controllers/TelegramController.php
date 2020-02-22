@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Telegram\Bot;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Log;
 use Telegram\Bot\Api;
@@ -35,11 +36,14 @@ class TelegramController extends Controller
 
     /**
      * Incoming telegram update
+     * @throws \Exception
      */
-    public function update()
+    public function update(Bot $bot)
     {
         $update = $this->telegram->getWebhookUpdate();
 
-        Log::debug(file_get_contents('php://input'));
+        Log::debug(print_r($update, true));
+
+        $bot->handleUpdate($update);
     }
 }
