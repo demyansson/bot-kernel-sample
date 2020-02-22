@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\BotKernel\Bot;
+use App\BotKernel\Handlers\Feedback;
 use App\BotKernel\Handlers\SetCategory;
 use App\BotKernel\Handlers\SetContact;
 use App\BotKernel\Handlers\SetName;
@@ -51,7 +52,8 @@ class BotServiceProvider extends ServiceProvider
             }, 'set_category')
             ->addHandler(SetPhoto::class, function (IMessengerContext $messenger) {
                 return $messenger->get('photo') instanceof PhotoSize;
-            }, 'set_photo');
+            }, 'set_photo')
+            ->addHandler(Feedback::class, true, 'feedback');
 
         Log::info('Bot is configured');
 
