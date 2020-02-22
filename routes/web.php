@@ -18,3 +18,9 @@ Route::get('/', function () {
 Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
+
+
+Route::prefix('/telegram/' . config('telegram.bots.common.token'))->group(function () {
+    Route::get('/webhook/setup', 'TelegramController@setupWebhook')->name('telegram.webhook.setup');
+    Route::any('/update', 'TelegramController@update')->name('telegram.update');
+});
